@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>SSE Chat Room</title>
+</head>
+
+<body>
+  <h1>SSE Chat Room</h1>
+  <input type="text" id="roomId" placeholder="Enter Room ID">
+  <button onclick="connect()">Connect</button>
+  <div id="messages"></div>
+
+  <script>
+    let eventSource;
+
+    function connect() {
+      const roomId = document.getElementById('roomId').value;
+      eventSource = new EventSource(`http://127.0.0.1:8080/sse/connect/${roomId}`);
+
+      eventSource.onmessage = function (event) {
+        const messagesDiv = document.getElementById('messages');
+        const messageElement = document.createElement('div');
+        messageElement.innerText = event.data;
+        messagesDiv.appendChild(messageElement);
+      };
+
+      eventSource.onerror = function (event) {
+        console.error("SSE error:", event);
+        eventSource.close();
+      };
+    }
+  </script>
+</body>
+
+</html>
